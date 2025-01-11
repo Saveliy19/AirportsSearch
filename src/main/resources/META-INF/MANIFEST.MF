@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: com.app.App
+Class-Path: gson-2.11.0.jar error_prone_annotations-2.27.0.jar
+
