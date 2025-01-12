@@ -4,6 +4,5 @@ import com.app.entities.Trie;
 
 public interface IAirportRepository {
 
-    public Trie getAllAirports(int column);
-
+    public Trie loadAirportsInBatches(int column, int iterationNumber);
 }

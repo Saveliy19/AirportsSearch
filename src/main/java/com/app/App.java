@@ -1,5 +1,6 @@
 package com.app;
 
+import com.app.entities.SearchResult;
 import com.app.entities.Trie;
 import com.app.repositories.CsvAirportRepository;
 import com.app.repositories.interfaces.IAirportRepository;
@@ -9,12 +10,10 @@ import com.utils.JsonFileWriter;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class App {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
         long startTime = System.currentTimeMillis();
         ArgumentParser argParser = new ArgumentParser(args);
@@ -26,29 +25,51 @@ public class App {
 
         IAirportRepository _airportRepository = new CsvAirportRepository(dataPath);
 
-        Trie trie = _airportRepository.getAllAirports(column);
+        List<String> searchWords = InputFileReader.readFile(inputPath);
 
-        ArrayList<String> searchWords = InputFileReader.readFile(inputPath);
+        // Thread.sleep(60000); // 60 секунд
+
 
         long initTime = System.currentTimeMillis() - startTime;
 
-        ArrayList<Map<String, Object>> results = new ArrayList<>();
-        for (String searchWord : searchWords) {
-            long searchStartTime = System.currentTimeMillis();
+        long searchStartTime;
+        long searchTime;
+        Trie trie;
+        SearchResult sr;
 
-            ArrayList<Short> ids = trie.searchIds(searchWord);
+        Map<String, SearchResult> searchResults = new HashMap<>();
+        for (int i = 0; i < 8; i++) {
+            trie = _airportRepository.loadAirportsInBatches(column, i);
 
-            long searchTime = System.currentTimeMillis() - searchStartTime;
+            for (String word : searchWords) {
+                searchStartTime = System.currentTimeMillis();
+                List<Short> ids = trie.searchIds(word);
+                searchTime = System.currentTimeMillis() - searchStartTime;
 
-            Map<String, Object> resultEntry = new HashMap<>();
-            resultEntry.put("search", searchWord);
-            resultEntry.put("result", ids);
-            resultEntry.put("time", searchTime);
+                if (searchResults.containsKey(word)) {
+                    sr = searchResults.get(word);
+                    searchResults.get(word).ids.addAll(ids);
+                }
+                else {
+                    sr = new SearchResult();
+                    sr.ids = ids;
+                    searchResults.put(word, sr);
+                }
+                sr.time += searchTime;
+            }
+        }
+
+        List<Map<String, Object>> results = new ArrayList<>();
+        for (String word : searchWords) {
+            Map<String, Object> resultEntry = new LinkedHashMap<>();
+            resultEntry.put("search", word);
+            resultEntry.put("result", searchResults.get(word).ids);
+            resultEntry.put("time", searchResults.get(word).time);
 
             results.add(resultEntry);
         }
 
-        Map<String, Object> outputData = new HashMap<>();
+        Map<String, Object> outputData = new LinkedHashMap<>();
         outputData.put("initTime", initTime);
         outputData.put("result", results);
 

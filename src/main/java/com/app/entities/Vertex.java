@@ -1,17 +1,22 @@
 package com.app.entities;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class Vertex implements IEntity {
-    public final Character letter;
-    private final ArrayList<Short> idList;
-    private final ArrayList<Vertex> children;
+public class Vertex {
+    private final char letter;
+    private final List<Short> idList;
+    private final List<Vertex> children;
 
     public Vertex(char ch, short id) {
         this.letter = ch;
         this.children = new ArrayList<Vertex>();
         this.idList = new ArrayList<Short>();
         this.idList.add(id);
+    }
+
+    public char getLetter() {
+        return letter;
     }
 
     public Vertex addChild(char ch, short id) {
@@ -24,11 +29,11 @@ public class Vertex implements IEntity {
         this.idList.add(id);
     }
 
-    public ArrayList<Short> getIdList() {
+    public List<Short> getIdList() {
         return this.idList;
     }
 
-    public ArrayList<Vertex> getChildren() {
+    public List<Vertex> getChildren() {
         return this.children;
     }
 

@@ -13,16 +13,13 @@ public class ArgumentParser {
 
     private void parseArguments(String[] args) {
         for (int i = 0; i < args.length - 1; i += 2) {
-            String key = args[i];
-            String value = args[i + 1];
-            if (key.startsWith("--")) arguments.put(key, value);
-            else throw new IllegalArgumentException("Invalid argument format" + key);
+            if (args[i].startsWith("--")) arguments.put(args[i], args[i + 1]);
+            else throw new IllegalArgumentException("Invalid argument format" + args[i]);
         }
     }
 
     public String get(String key) {
         if (!arguments.containsKey(key)) throw new IllegalArgumentException("Missing required argument: " + key);
-
         return arguments.get(key);
     }
 }

@@ -1,8 +1,9 @@
 package com.app.entities;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class Trie implements IEntity {
+public class Trie {
     private Vertex root;
 
     public Trie() {
@@ -14,7 +15,7 @@ public class Trie implements IEntity {
         for (char ch : word.toCharArray()) {
             boolean found = false;
             for (Vertex child : current.getChildren()) {
-                if (child.letter == ch) {
+                if (child.getLetter() == ch) {
                     found = true;
                     child.addId(id);
                     current = child;
@@ -25,13 +26,13 @@ public class Trie implements IEntity {
         }
     }
 
-    public ArrayList<Short> searchIds(String searchWord) {
+    public List<Short> searchIds(String searchWord) {
         Vertex current = root;
 
         for (char ch : searchWord.toCharArray()) {
             boolean found = false;
             for (Vertex child : current.getChildren()) {
-                if (child.letter == ch) {
+                if (child.getLetter() == ch) {
                     found = true;
                     current = child;
                     break;

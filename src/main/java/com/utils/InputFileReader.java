@@ -1,21 +1,27 @@
 package com.utils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.List;
 
 public class InputFileReader {
 
     private InputFileReader() {}
 
-    public static ArrayList<String> readFile(String filePath) throws FileNotFoundException {
+    public static List<String> readFile(String filePath) throws FileNotFoundException {
         ArrayList<String> lines = new ArrayList<>();
-        try (Scanner scanner = new Scanner(new File(filePath))) {
-            while (scanner.hasNextLine()) {
-                lines.add(scanner.nextLine().trim());
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                lines.add(line.trim());
             }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
         return lines;
     }
 }

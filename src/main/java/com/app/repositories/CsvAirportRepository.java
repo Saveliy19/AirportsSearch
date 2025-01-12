@@ -17,16 +17,25 @@ public class CsvAirportRepository implements IAirportRepository {
 
 
     @Override
-    public Trie getAllAirports(int column) {
+    public Trie loadAirportsInBatches(int column, int iterationNumber) {
+        int batchSize = 1000;
+        int counter = 0;
+        int startRow = iterationNumber * batchSize;
+
         Trie trie = new Trie();
 
         try (BufferedReader br = new BufferedReader(new FileReader(_dataPath))) {
             String line;
             String[] data;
 
-            while ((line = br.readLine()) != null) {
-                data  = line.split(",");
-                trie.insert(Short.parseShort(removeQuotes(data[0])), removeQuotes(data[column-1]));
+            for (int i = 0; i < startRow && br.readLine() != null; i++) {
+
+            }
+
+            while ((line = br.readLine()) != null && counter < batchSize) {
+                data = line.split(",");
+                trie.insert(Short.parseShort(removeQuotes(data[0])), removeQuotes(data[column - 1]));
+                counter++;
             }
 
         } catch (IOException e) {
