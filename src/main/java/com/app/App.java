@@ -7,16 +7,20 @@ import com.app.repositories.interfaces.IAirportRepository;
 import com.utils.ArgumentParser;
 import com.utils.InputFileReader;
 import com.utils.JsonFileWriter;
-
-import java.io.FileNotFoundException;
+import com.utils.interfaces.IArgumentParser;
+import com.utils.interfaces.IFileReader;
+import com.utils.interfaces.IFileWriter;
 import java.io.IOException;
 import java.util.*;
 
 public class App {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
 
         long startTime = System.currentTimeMillis();
-        ArgumentParser argParser = new ArgumentParser(args);
+
+        IArgumentParser argParser = new ArgumentParser(args);
+        IFileReader fileReader = new InputFileReader();
+        IFileWriter fileWriter = new JsonFileWriter();
 
         String dataPath = argParser.get("--data");
         String inputPath = argParser.get("--input-file");
@@ -25,10 +29,7 @@ public class App {
 
         IAirportRepository _airportRepository = new CsvAirportRepository(dataPath);
 
-        List<String> searchWords = InputFileReader.readFile(inputPath);
-
-        // Thread.sleep(60000); // 60 секунд
-
+        List<String> searchWords = fileReader.readFile(inputPath);
 
         long initTime = System.currentTimeMillis() - startTime;
 
@@ -73,6 +74,6 @@ public class App {
         outputData.put("initTime", initTime);
         outputData.put("result", results);
 
-        JsonFileWriter.writeJsonFile(outputPath, outputData);
+        fileWriter.writeJsonFile(outputPath, outputData);
     }
 }

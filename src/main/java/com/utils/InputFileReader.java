@@ -1,14 +1,16 @@
 package com.utils;
 
+import com.utils.interfaces.IFileReader;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InputFileReader {
+public class InputFileReader implements IFileReader {
 
-    private InputFileReader() {}
+    public InputFileReader() {}
 
-    public static List<String> readFile(String filePath) throws FileNotFoundException {
+    public List<String> readFile(String filePath) {
         ArrayList<String> lines = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {

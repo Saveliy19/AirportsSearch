@@ -1,9 +1,11 @@
 package com.utils;
 
+import com.utils.interfaces.IArgumentParser;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class ArgumentParser {
+public class ArgumentParser implements IArgumentParser {
     private final Map<String, String> arguments;
 
     public ArgumentParser(String[] args) {
