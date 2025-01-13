@@ -46,7 +46,7 @@ public class CsvAirportRepository implements IAirportRepository {
 
     @Override
     public Trie loadAirportsInBatches(List<Airport> airports) {
-        int batchSize = 500;
+        int batchSize = 1000;
         Trie trie = new Trie();
         int counter = 0;
 

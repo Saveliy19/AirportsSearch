@@ -6,6 +6,12 @@ public class Airport implements Comparable<Airport> {
 
     @Override
     public int compareTo(Airport other) {
-        return this.value.compareTo(other.value);
+        try {
+            double thisValueAsNumber = Double.parseDouble(this.value);
+            double otherValueAsNumber = Double.parseDouble(other.value);
+            return Double.compare(thisValueAsNumber, otherValueAsNumber);
+        } catch (NumberFormatException e) {
+            return this.value.compareTo(other.value);
+        }
     }
 }
