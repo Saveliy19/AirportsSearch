@@ -1,5 +1,6 @@
 package com.app;
 
+import com.app.entities.Airport;
 import com.app.entities.SearchResult;
 import com.app.entities.Trie;
 import com.app.repositories.CsvAirportRepository;
@@ -38,9 +39,11 @@ public class App {
         Trie trie;
         SearchResult sr;
 
+        List<Airport> airports = _airportRepository.getAllAirports(column);
+
         Map<String, SearchResult> searchResults = new HashMap<>();
         for (int i = 0; i < 8; i++) {
-            trie = _airportRepository.loadAirportsInBatches(column, i);
+            trie = _airportRepository.loadAirportsInBatches(airports);
 
             for (String word : searchWords) {
                 searchStartTime = System.currentTimeMillis();

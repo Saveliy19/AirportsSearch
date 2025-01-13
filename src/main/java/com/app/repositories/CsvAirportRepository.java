@@ -1,11 +1,16 @@
 package com.app.repositories;
 
+import com.app.entities.Airport;
 import com.app.entities.Trie;
 import com.app.repositories.interfaces.IAirportRepository;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class CsvAirportRepository implements IAirportRepository {
 
@@ -17,33 +22,45 @@ public class CsvAirportRepository implements IAirportRepository {
 
 
     @Override
-    public Trie loadAirportsInBatches(int column, int iterationNumber) {
-        int batchSize = 1000;
-        int counter = 0;
-        int startRow = iterationNumber * batchSize;
-
-        Trie trie = new Trie();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(_dataPath))) {
+    public List<Airport> getAllAirports(int column) {
+        List<Airport> airports = new ArrayList<Airport>();
+        Airport airport;
+        try (BufferedReader br = new BufferedReader(new FileReader(_dataPath))){
             String line;
-            String[] data;
-
-            for (int i = 0; i < startRow && br.readLine() != null; i++) {
-
+            String[] tokens;
+            while ((line = br.readLine()) != null) {
+                tokens = line.split(",");
+                airport = new Airport();
+                airport.id = Short.parseShort(tokens[0]);
+                airport.value = removeQuotes(tokens[column-1]);
+                airports.add(airport);
             }
-
-            while ((line = br.readLine()) != null && counter < batchSize) {
-                data = line.split(",");
-                trie.insert(Short.parseShort(removeQuotes(data[0])), removeQuotes(data[column - 1]));
-                counter++;
-            }
-
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
-        return trie;
+
+        Collections.sort(airports);
+        return airports;
     }
 
+    @Override
+    public Trie loadAirportsInBatches(List<Airport> airports) {
+        int batchSize = 1000;
+        Trie trie = new Trie();
+        int counter = 0;
+
+        Iterator<Airport> iterator = airports.iterator();
+
+        while (iterator.hasNext() && counter < batchSize) {
+            Airport airport = iterator.next();
+            trie.insert(airport.id, airport.value);
+            iterator.remove();
+            counter++;
+        }
+
+        return trie;
+    }
     private String removeQuotes(String value) {
         if (value.startsWith("\"") && value.endsWith("\"")) {
             return value.substring(1, value.length() - 1);
