@@ -42,7 +42,7 @@ public class App {
         List<Airport> airports = _airportRepository.getAllAirports(column);
 
         Map<String, SearchResult> searchResults = new HashMap<>();
-        for (int i = 0; i < 8; i++) {
+        while (!airports.isEmpty()) {
             trie = _airportRepository.loadAirportsInBatches(airports);
 
             for (String word : searchWords) {
